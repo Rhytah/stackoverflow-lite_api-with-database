@@ -1,11 +1,11 @@
 import psycopg2
-#from app import db
+from pprint import pprint
+from .models import User
+
+
 
 class DbManager:
     
-
-
-
 
     def connect(self):
         try:
@@ -19,6 +19,14 @@ class DbManager:
 
     def create_tables(self):
         sql_cmds= (
+            """
+            CREATE TABLE users(
+                user_id SERIAL PIMARY KEY,
+                name VARCHAR(25) NOT NULL,
+                username VARCHAR(10),
+                password VARCHAR(30)
+            )
+            """,
             """
             CREATE TABLE questions(
                 question_id SERIAL PRIMARY KEY,
@@ -37,6 +45,15 @@ class DbManager:
             )
             """
         )
+
+    def register(self,name,username,password):
+        password=self.hash_password(password)
+        user =User(name,username,password)
+        sql= "INSERT INTO users(name,username,password) VALUES ('{}','{}','{}).format(user.name, user.username,user.password)
+        pprint(sql)
+        self.cur.execute(sql)
+        return jsonify({'message': 'USer now registered'})
+
 
         try:
             conn=self.connect()
