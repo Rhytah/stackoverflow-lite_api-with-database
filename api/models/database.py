@@ -30,12 +30,15 @@ class DbManager:
             """
             CREATE TABLE questions(
                 question_id SERIAL PRIMARY KEY,
-                question_title VARCHAR(255) NOT NULL
+                subject VARCHAR(255) NOT NULL,
+                asked_by VARCHAR(30) NOT NULL
             )
             """,
             """ CREATE TABLE answers(
                 answer_id SERIAL PRIMARY KEY,
-                answer_detail VARCHAR (255) NOT NULL
+                question_id VARCHAR (255) NOT NULL,
+                answered_by VARCHAR(30) NOT NULL,
+                description VARCHAR (255) NOT NULL
             )
             """,
             """CREATE TABLE users(

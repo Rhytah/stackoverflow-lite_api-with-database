@@ -11,6 +11,8 @@ class User:
         self.username=username
         self.password =password
 
+users=[]
+
 
 
 class Question:
@@ -19,6 +21,7 @@ class Question:
         self.subject = subject
         self.asked_by =asked_by
 
+questions=[]
 
 class Answer:
     def __init__(self, answer_id,question_id, answered_by,description,answer_date):
@@ -26,7 +29,7 @@ class Answer:
         self.question_id = question_id
         self.answered_by = answered_by
         self.description=description
-
+answers=[]
 
 
 
