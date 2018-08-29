@@ -1,27 +1,45 @@
-from flask_restful import Resource
-from flask import request, api
+from flask import Flask
+from flask_restful import Resource, Api
 
-from models import Question, Answer, User
-from .app import api
-from api.database_config import DbManager
+app = Flask(__name__)
+api = Api(app)
 
-app=Flask(__name__)
-
-
-dbmanager= DbManager(host='localhost', database='overflow',user='postgres',password='andela')
-
-class Signup(Resource):
+class Register(Resource):
     def post(self):
-        user_data =request.get_json()
-        name=user_data['name']
-        username=user_data['username']
-        password=user_data['password']
+        return {'message': 'Register user'}
 
-        if not user_data:
-            return {'message':'All fields are required'}
+api.add_resource(Register, '/auth/signup')
 
-        if not username or username=" ":
-            return {'message':'Please enter a valid UserName'}
+class Login(Resource):
+    def post(self):
+        return {'messgae':'user login'}
 
-    
+api.add_resource(Login, '/auth/login')
 
+class Allquestions(Resource):
+    def get(self):
+        return {'message':'Fetch all questions'}
+
+    def post(self):
+        return {'message': 'Add questions'}
+
+api.add_resource(Allquestions, '/api/v2/questions')
+
+class Specific_question(Resource):
+    def get(self, question_id):
+        return {'message':'fetch a specific question'}
+
+    def delete(self,question_id):
+        return {'message':'delete a question'}
+
+api.add_resource(Specific_question, '/api/v2/questions/question_id')
+
+class Answertoqtn(Resource):
+    def post(self, question_id):
+        return {'message':'post an answer to a question'}
+
+api.add_resource(Answertoqtn, '/api/v2/questions/question_id/answers')
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
