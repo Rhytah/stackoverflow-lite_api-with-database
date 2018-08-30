@@ -7,8 +7,9 @@ from flask_jwt_extended import(JWTManager,jwt_required,create_access_token,get_j
 
 
 app = Flask(__name__)
- #setup flask-jwt-extened entension
+
 app.config['JWT_SECRET_KEY'] = 'rhytahz'
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] =False
 jwt = JWTManager(app)
 dbmanager=DbManager()
 
@@ -24,8 +25,7 @@ def user_signup():
     if not user_data:
         return jsonify({'status':'Fail',
                 'message':'All fields are required'})
-
-    if not name or name == "  ":
+    if len(name)<5:
         return jsonify({"message": 'Invalid, Please enter a correct name'})
 
     if not username or username == "  ":
@@ -45,9 +45,9 @@ def login_user():
     username=user_data['username']
     password=user_data['password']
     dbmanager_query=dbmanager.get_by_argument('users','username',username)
-    # user=User(dbmanager_query[0], dbmanager_query[1], dbmanager_query[2], dbmanager_query[3])
+    user=User(dbmanager_query[0], dbmanager_query[1], dbmanager_query[2], dbmanager_query[3])
     
-    # print (user)
+    print (user)
     if not username:
         return jsonify({"msg" : "Provide Valid Username"}),400
 
@@ -67,23 +67,7 @@ def protected():
     current_user=get_jwt_identity()
     return jsonify(loggesd_in_as=current_user),200
     
-    # if user.username ==user_data['username']:
-    #     token = jwt.encode(
-    #                     {'username': user.username,
-    #                      'exp': datetime.utcnow() +
-    #                      timedelta(days=10, minutes=60)
-    #                      }, 'mysecret')
-    #     if token:
-    #         response = {
-    #             'message': 'You logged in successfully.',
-    #             'token': token.decode('UTF-8'),
-    #             'name': user.name,
-    #             'username': user.username,
-    #             'user_id': user.user_id
-    #         }
-    #     return make_response(jsonify(response)), 200
-        
-    # return jsonify({'message':'Invalid username or password, try again or create an account'}), 401
+    
 
 @app.route('/api/v2/questions', methods =['GET'])
 @jwt_required
@@ -112,62 +96,31 @@ def add_question():
     asked_by=request_data['asked_by']
     
     question= dbmanager.addon_question(subject,asked_by)
-    return jsonify({'message':'Your question has been posted'})
+    return jsonify({
+        'message':'Your question has been posted',
+        'Question':question})
 
 
-@app.route('/api/v2/question/<int:question_id>', methods=['GET'])
+@app.route('/api/v2/questions/<int:question_id>', methods=['GET'])
 @jwt_required
 def fetch_a_question(question_id):
     
-    question=dbmanager.get_a_question()
-    for Specific_question in questions:
-        if Specific_question.get(id)==question_id:
-            return jsonify({'message': Specific_question})
+    question=dbmanager.get_a_question(question_id)
+    return jsonify({'Question':question})
 
-    return jsonify({
-        'status':'Fail',
-        'message':'Question doesnot exist'
-    })
+@app.route('/api/v2/questions/<int:question_id>', methods=['DELETE'])
+@jwt_required
+def delete_question(question_id):
+    current_user=get_jwt_identity()
+    dbmanager.delete_a_question(question_id,current_user)
+    return jsonify({'message': 'question {} deleted'.format(question_id)})
     
 
-
-
-
+@app.route('/api/v2/<int:question_id>/answers')
+@jwt_required
+def add_answer_to_question(question_id):
+    pass
     
-# api.add_resource(Register, '/api/v2/auth/signup')
-
-# class Login(Resource):
-#     def post(self):
-#         return {'messgae':'user login'}
-
-# api.add_resource(Login, '/auth/login')
-
-# class Allquestions(Resource):
-#     def get(self):
-#         request_data=request.get_json()
-
-#         return {'message':'Fetch all questions'}
-
-#     def post(self):
-#         return {'message': 'Add questions'}
-
-# api.add_resource(Allquestions, '/api/v2/questions')
-
-# class Specific_question(Resource):
-#     def get(self, question_id):
-#         return {'message':'fetch a specific question'}
-
-#     def delete(self,question_id):
-#         return {'message':'delete a question'}
-
-# api.add_resource(Specific_question, '/api/v2/questions/question_id')
-
-# class Answertoqtn(Resource):
-#     def post(self, question_id):
-#         return {'message':'post an answer to a question'}
-
-# api.add_resource(Answertoqtn, '/api/v2/questions/question_id/answers')
-
 
 if __name__ == '__main__':
     app.run(debug=True)
