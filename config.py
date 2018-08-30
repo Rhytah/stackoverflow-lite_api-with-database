@@ -2,6 +2,7 @@ class Config:
     DEBUG=False
     TESTING = False
     CSRF_ENABLED=True
+    SECRET= 'secresthere'
     
 
 
@@ -20,7 +21,8 @@ app_configuration = {
 
     "development":DevelopmentConfig,
 
-    "testing":TestingConfig
+    "testing":TestingConfig,
+    "production":ProductionConfig
 
 }
 
