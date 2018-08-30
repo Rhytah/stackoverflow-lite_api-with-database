@@ -2,7 +2,7 @@ from flask import Flask,request,jsonify,make_response
 #from flask_restful import Resource, Api
 from .models.api_models import User, Question
 from api.models.database import DbManager
-import jwt
+
 from datetime import datetime,timedelta
 
 
@@ -81,6 +81,17 @@ def fetch_questions():
         })
  
     return jsonify({'questions':questions})
+@app.route('/api/v2/questions', methods=['POST'])
+def add_question():
+    questions=dbmanager.get_questions()
+    request_data=request.get_json()
+    question_id=len(questions)+1
+    subject=request_data['subject']
+    #asked_by=request_data['asked_by']
+    
+    return dbmanager.add_question('subject')
+
+    
 
 
 

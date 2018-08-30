@@ -23,7 +23,7 @@ class DbManager:
     def create_tables(self):
         sql_cmd1="CREATE TABLE IF NOT EXISTS users(user_id SERIAL PRIMARY KEY,name VARCHAR(25) NOT NULL,username VARCHAR(10),password VARCHAR(30))"
         self.cur.execute(sql_cmd1)
-        sql_cmd2="CREATE TABLE IF NOT EXISTS questions(question_id SERIAL PRIMARY KEY,subject VARCHAR(255) NOT NULL,asked_by VARCHAR(30) NOT NULL, user_id FOREIGN KEY,question_date DATE)"
+        sql_cmd2="CREATE TABLE IF NOT EXISTS questions(question_id SERIAL PRIMARY KEY,subject VARCHAR(255) NOT NULL,asked_by VARCHAR(30) NOT NULL)"
         self.cur.execute(sql_cmd2)
             
         sql_cmd3="CREATE TABLE IF NOT EXISTS answers(answer_id SERIAL PRIMARY KEY,question_id VARCHAR (255) NOT NULL,answered_by VARCHAR(30) NOT NULL,description VARCHAR (255) NOT NULL)"
@@ -60,16 +60,32 @@ class DbManager:
         result = self.cur.fetchone()
         return result
 
-    def add_question(self,subject,asked_by,user_id,question_date):
-        aq_cmd= "SELECT user_id FROM users WHERE username = '{}'".format(asked_by)
+    def add_question(self,subject,asked_by):
+        aq_cmd= "SELECT user_id FROM users WHERE username = '{}';".format(asked_by)
         self.cur.execute(aq_cmd)
-        user=self.cur.fectchone()
-        question=Question(subject,asked_by,user_id,question_date)
+        user=self.cur.fetchone()
+        question=Question(subject,asked_by)
 
-        q_cmd= "INSERT INTO questions(subject,asked_by,user_id) VALUES ('{}','{}',user[0],question.subject,question.asked_by,question.user_id,question.question_date);".format(subject,asked_by,user_id,question_date)
+        q_cmd= "INSERT INTO questions(subject,asked_by) VALUES ('{}','{}',user[0],question.subject,question.asked_by);".format(subject,asked_by)
         print(q_cmd)
         self.cur.execute(q_cmd)
         self.conn.commit()
+
+    def get_questions(self):
+        gaq_cmd ="SELECT question_id,questions FROM questions;"
+        self.cur.execute(gaq_cmd)
+        rows = self.cur.fetchall()
+        questions =[questions for questions in rows]
+        allqn= []
+        for value in range(len(questions)):
+            question=(
+                {'question_id':Questions[value][0],
+                'question':questions[value][1]})
+            allqn.append(question)
+        return allqn
+        self.conn.commit()
+
+    
         #conn=None
         # user_id= None
 
@@ -93,3 +109,4 @@ if __name__ =='__main__':
     db.create_tables()
     db.register_user()
     db.add_question()
+    db.get_questions()
