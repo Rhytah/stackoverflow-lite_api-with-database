@@ -1,6 +1,7 @@
 import unittest
-from api.models.api_models import User
-from .test_base import BaseTestCase
+from api.models.api_models import User 
+import BaseTestCase
+from flask_jwt_extended import(JWTManager,jwt_required,create_access_token,get_jwt_identity)
 
 
 class TestUserModel(BaseTestCase):
