@@ -78,19 +78,33 @@ def fetch_questions():
         return jsonify({
             "message":'Here are the questions',
             "questions":questions
-        })
+        }),200
  
     return jsonify({'questions':questions})
 @app.route('/api/v2/questions', methods=['POST'])
 def add_question():
-    questions=dbmanager.get_questions()
+    #questions=dbmanager.get_questions()
     request_data=request.get_json()
-    question_id=len(questions)+1
+    #question_id=len(questions)+1
     subject=request_data['subject']
-    #asked_by=request_data['asked_by']
+    asked_by=request_data['asked_by']
     
-    return dbmanager.add_question('subject')
+    question= dbmanager.addon_question(subject,asked_by)
+    return jsonify({'message':'Your question has been posted'})
 
+
+@app.route('/api/v2/question/<int:question_id>', methods=['GET'])
+def fetch_a_question(question_id):
+    
+    question=dbmanager.get_a_question()
+    for Specific_question in questions:
+        if Specific_question.get(id)==question_id:
+            return jsonify({'message': Specific_question})
+
+    return jsonify({
+        'status':'Fail',
+        'message':'Question doesnot exist'
+    })
     
 
 

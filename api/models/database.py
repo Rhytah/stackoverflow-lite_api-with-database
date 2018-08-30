@@ -60,13 +60,13 @@ class DbManager:
         result = self.cur.fetchone()
         return result
 
-    def add_question(self,subject,asked_by):
-        aq_cmd= "SELECT user_id FROM users WHERE username = '{}';".format(asked_by)
-        self.cur.execute(aq_cmd)
-        user=self.cur.fetchone()
-        question=Question(subject,asked_by)
+    def addon_question(self,subject,asked_by):
+        # aq_cmd= "SELECT user_id FROM users WHERE username = '{}';".format(asked_by)
+        # self.cur.execute(aq_cmd)
+        # user=self.cur.fetchone()
+        #question=Question(question_id,subject,asked_by)
 
-        q_cmd= "INSERT INTO questions(subject,asked_by) VALUES ('{}','{}',user[0],question.subject,question.asked_by);".format(subject,asked_by)
+        q_cmd= "INSERT INTO questions(subject,asked_by) VALUES ('{}','{}');".format(subject,asked_by)
         print(q_cmd)
         self.cur.execute(q_cmd)
         self.conn.commit()
@@ -79,11 +79,19 @@ class DbManager:
         allqn= []
         for value in range(len(questions)):
             question=(
-                {'question_id':Questions[value][0],
+                {'question_id':questions[value][0],
                 'question':questions[value][1]})
             allqn.append(question)
         return allqn
         self.conn.commit()
+
+    def get_a_question(self):
+        gaq_cmd="SELECT subject,asked_by FROM questions WHERE question_id = {};".format(question_id) 
+        self.cur.execute(gaq_cmd)
+        question=self.cur.fetchone()
+        self.conn.commit()
+        print (question)
+
 
     
         #conn=None
