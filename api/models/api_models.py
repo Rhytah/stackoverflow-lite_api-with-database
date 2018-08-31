@@ -1,32 +1,12 @@
 import psycopg2
 import os
-
-
-
-
-
 class User:
     def __init__(self,user_id,name,username,password):
         self.user_id=user_id
         self.name=name
         self.username=username
         self.password =password
-    # def encode_auth_token(self,user_id):
     
-    #     try:
-    #         payload= {
-    #             'exp':datetime.datatime.utcnow() + datatime.timedelta(days=0, seconds=0),
-    #             'iat': datetime.datetime.utcnow(),
-    #             'sub': user_id
-    #         }
-    #         return jwt.encode(
-    #             payload,
-    #             app.config.get('SECRET_KEY'),
-    #             algorithm='HS256'
-    #         )
-        # except Exception as e:
-        #     return e
-
 users=[]
 
 
@@ -50,6 +30,6 @@ class Answer:
 answers=[]
 
 
-if __name__=='__main__':
-    app.run()
+# if __name__=='__main__':
+#     app.run()
 
