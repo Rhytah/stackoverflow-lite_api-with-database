@@ -15,8 +15,9 @@ StackOverflow-lite_Api is an interface that comprises of a set of endpoints that
 
 
 ## Getting Started
+
 clone the github repo to your computer:
-* $git clone https://github.com/Rhytah/stackoverflow-lite_api
+* $git clone https://github.com/Rhytah/stackoverflow-lite_api-with-database/tree/API-endpoints
 * Extract the zip file to another file
 
 **Create virtual environment and activate it**
