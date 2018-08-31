@@ -11,6 +11,8 @@ StackOverflow-lite_Api is an interface that comprises of a set of endpoints that
 * Pylint - a Python linting library 
 * Postman -Application to test and consume endpoints
 * PEP8 - Style guide
+* PostgresSQL -Database
+
 
 ## Getting Started
 clone the github repo to your computer:
