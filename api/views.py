@@ -41,21 +41,21 @@ def user_signup():
 @app.route('/api/v2/auth/login', methods =['POST'])
 def login_user():
     user_data=request.get_json()
-    #name=user_data['name']
+    
     username=user_data['username']
     password=user_data['password']
     dbmanager_query=dbmanager.get_by_argument('users','username',username)
-    user=User(dbmanager_query[0], dbmanager_query[1], dbmanager_query[2], dbmanager_query[3])
+    #user=User(dbmanager_query[0], dbmanager_query[1], dbmanager_query[2], dbmanager_query[3])
     
-    print (user)
+    
     if not username:
         return jsonify({"msg" : "Provide Valid Username"}),400
 
     if not password:
         return jsonify({"msg" : "Incorrect password"}),400
 
-    # if username !='test' or password !='test':
-    #     return jsonify({"msg": "Invalid username or password"})
+    if username !='test' or password !='test':
+        return jsonify({"msg": "Invalid username or password"})
 
     access_token= create_access_token(identity=username)
     return jsonify(access_token=access_token),200
@@ -72,6 +72,8 @@ def protected():
 @app.route('/api/v2/questions', methods =['GET'])
 @jwt_required
 def fetch_questions():
+    current_user=get_jwt_identity()
+
     questions= dbmanager.get_questions()   
     if len(questions)<1:
         return jsonify({
@@ -89,22 +91,24 @@ def fetch_questions():
 @app.route('/api/v2/questions', methods=['POST'])
 @jwt_required
 def add_question():
-    #questions=dbmanager.get_questions()
+    current_user=get_jwt_identity()
+    asked_by =current_user
     request_data=request.get_json()
-    #question_id=len(questions)+1
     subject=request_data['subject']
-    asked_by=request_data['asked_by']
-    
+    #asked_by=request_data['asked_by']
     question= dbmanager.addon_question(subject,asked_by)
+    if len(subject)<=2:
+        return jsonify({"messagse":'Please write a meaningful question'})
+    
+    
     return jsonify({
-        'message':'Your question has been posted',
-        'Question':question})
+        'message':'Your question has been posted'})
 
 
 @app.route('/api/v2/questions/<int:question_id>', methods=['GET'])
 @jwt_required
 def fetch_a_question(question_id):
-    
+    current_user=get_jwt_identity()
     question=dbmanager.get_a_question(question_id)
     return jsonify({'Question':question})
 
@@ -113,17 +117,39 @@ def fetch_a_question(question_id):
 def delete_question(question_id):
     current_user=get_jwt_identity()
     dbmanager.delete_a_question(question_id,current_user)
+
+
     return jsonify({'message': 'question {} deleted'.format(question_id)})
     
 
-@app.route('/api/v2/<int:question_id>/answers')
+@app.route('/api/v2/questions/<int:question_id>/answers', methods=['POST'])
 @jwt_required
 def add_answer_to_question(question_id):
-    pass
+    current_user=get_jwt_identity()
+    #answered_by=current_user
+    answer_data=request.get_json()
+    description=answer_data['description']
+    
+    if len(description)<=5:
+        return jsonify({"message":'Please write a full answer'})
+
+    answer=dbmanager.q_a(question_id,description)
+    return jsonify({
+        "message":'Answer added for question {}.format(question_id)',
+        "answer":answer})
+
+@app.route('/api/v2/questions/<int:question_is>/answers/<int:answer_id', methods=['PUT'])
+def prefer():
+        data = api.payload
+        question_id = question_id
+        anwser_id = answer_id
+        print(anwser_id)
+        accept_status = data['accept_status']
+        dbmanager.pacmds(mark, question_id)
+        return {'message': 'Answer status updated'}, 201
     
 
 if __name__ == '__main__':
     app.run(debug=True)
-    # db=DbManager()
-    # db.create_tables()
+  
     
